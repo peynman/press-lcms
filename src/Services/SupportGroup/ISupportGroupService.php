@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Larapress\Profiles\IProfileUser;
 use Larapress\ECommerce\IECommerceUser;
+use Larapress\LCMS\Services\SupportGroup\Requests\MySupportGroupUpdateRequest;
+use Larapress\LCMS\Services\SupportGroup\Requests\SupportGroupUpdateRequest;
 
 interface ISupportGroupService
 {
@@ -24,6 +26,7 @@ interface ISupportGroupService
      * @param Request $request
      * @param IProfileUser $user
      * @param IProfileUser|int $supportUser
+     *
      * @return Response
      */
     public function updateUserSupportGroup(Request $request, IECommerceUser $user, $supportUser);
@@ -32,29 +35,39 @@ interface ISupportGroupService
     /**
      * Undocumented function
      *
-     * @param Request $request
+     * @param MySupportGroupUpdateRequest $request
      * @param int|IProfileUser $supportUser
+     *
      * @return Response
      */
-    public function updateMySupportGroup(Request $request, $supportUser);
+    public function updateMySupportGroup(MySupportGroupUpdateRequest $request, $supportUser);
+
 
     /**
      * Undocumented function
      *
-     * @param Request $request
-     * @param IProfileUser $user
-     * @param int $introducerId
-     * @param bool $updateSupportGroup
-     * @param bool $updateIntroducer
+     * @param IECommerceUser $user
+     * @param IECommerceUser $supportUser
+     *
      * @return void
      */
-    public function updateUserRegistrationGiftWithIntroducer(IProfileUser $user, $introducerId, $updateSupportGroup, $updateIntroducer);
+    public function giftUserForSupportGroupRegistration(IECommerceUser $user, IECommerceUser $supportUser);
 
     /**
      * Undocumented function
      *
      * @param IProfileUser $user
+     *
      * @return FormEntry[]
      */
     public function getIntroducedUsersList($user);
+
+    /**
+     * Undocumented function
+     *
+     * @param IProfileUser $user
+     *
+     * @return void
+     */
+    public function resetSupportGroupCache($user);
 }

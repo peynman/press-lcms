@@ -1,6 +1,6 @@
 <?php
 
-namespace Larapress\LCMS\Services\SupportGroup;
+namespace Larapress\LCMS\Services\SupportGroup\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

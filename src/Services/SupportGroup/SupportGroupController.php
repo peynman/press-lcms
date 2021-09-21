@@ -5,6 +5,8 @@ namespace Larapress\LCMS\Services\SupportGroup;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Larapress\LCMS\Services\SupportGroup\Requests\MySupportGroupUpdateRequest;
+use Larapress\LCMS\Services\SupportGroup\Requests\SupportGroupUpdateRequest;
 
 /**
  * LCMS Support Group

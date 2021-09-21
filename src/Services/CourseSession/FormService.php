@@ -107,7 +107,7 @@ class FormService implements
             throw new AppException(AppException::ERR_OBJ_ACCESS_DENIED);
         }
 
-        if (!$user->hasRole(config('larapress.profiles.security.roles.super-role'))) {
+        if (!$user->hasRole(config('larapress.profiles.security.roles.super_role'))) {
             if ($user->hasRole(config('larapress.lcms.owner_role_id'))) {
                 if (!in_array($sessionId, $user->getOwenedProductsIds())) {
                     throw new AppException(AppException::ERR_OBJ_ACCESS_DENIED);
@@ -164,7 +164,7 @@ class FormService implements
             $productIds[] = $session->parent_id;
         }
 
-        $userProviderClass = config('larapress.crud.user.crud-provider');
+        $userProviderClass = config('larapress.crud.user.provider');
         /** @var ICRUDService */
         $crud = app(ICRUDService::class);
         /** @var ICRUDProvider */

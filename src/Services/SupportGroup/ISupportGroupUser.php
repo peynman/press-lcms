@@ -3,21 +3,43 @@
 namespace Larapress\LCMS\Services\SupportGroup;
 use Illuminate\Support\Carbon;
 use Larapress\CRUD\Models\Role;
+use Larapress\Profiles\IProfileUser;
 
 interface ISupportGroupUser {
     /**
-     * Undocumented function
+     * Entry for support-profile
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function form_profile_support();
 
     /**
-     * Undocumented function
+     * Entry for support-group-{id}
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function form_support_registration_entry();
+
+    /**
+     * Entry for introducer-{id}
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function form_support_introducer_entry();
+
+    /**
+     * Support user entry for his/her profile
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function form_support_user_profile();
+
+    /**
+     * Undocumented function
+     *
+     * @return null|FormEntry
+     */
+    public function getProfileAttribute();
 
     /**
      * Undocumented function
@@ -44,28 +66,22 @@ interface ISupportGroupUser {
     /**
      * Undocumented function
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function form_support_introducer_entry();
-
-    /**
-     * Undocumented function
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function form_support_user_profile();
-
-    /**
-     * Undocumented function
-     *
-     * @return void
+     * @return array|null
      */
     public function getSupportUserProfileAttribute();
 
     /**
      * Undocumented function
      *
-     * @return void
+     * @return null|int
      */
-    public function getIntroducerDataAttribute();
+    public function getIntroducerId();
+
+
+    /**
+     * Undocumented function
+     *
+     * @return IProfileUser|null
+     */
+    public function getIntroducer();
 }

@@ -1,20 +1,23 @@
 <?php
 
-namespace Larapress\LCMS\Services\SupportGroup;
+namespace Larapress\LCMS\Services\CourseSession;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
+use Larapress\ECommerce\Models\Product;
 use Larapress\Profiles\Models\FormEntry;
 
-class FormEntryUserSupportProfileRelationship extends Relation
+class FormEntryTagCourseRelation extends Relation
 {
-
+    protected $table = '';
     protected $isReadyToLoad = false;
-    public function __construct(Model $parent)
+    public function __construct(Model $parent, Builder $query)
     {
-        parent::__construct(FormEntry::query(), $parent);
+        $this->table = $query->getModel()->getTable();
+        parent::__construct(Product::query(), $parent);
     }
 
     /**
@@ -25,15 +28,10 @@ class FormEntryUserSupportProfileRelationship extends Relation
     public function addConstraints()
     {
         $this->query
-            ->select(DB::raw('profile_entries.*, form_entries.updated_at as registrated_at, form_entries.user_id as user_id, profile_entries.user_id as support_user_id'))
-            ->join('users', function ($join) {
-                $join->on('tags', '=', DB::raw('CONCAT(\'support-group-\', users.id)'));
-            })
-            ->join('form_entries as profile_entries', function ($join) {
-                $join->on('users.id', '=', 'profile_entries.user_id');
-                $join->on('profile_entries.form_id', '=', DB::raw(config('larapress.lcms.support_profile_form_id')));
-            })
-            ;
+            ->select([$this->table.'.id', $this->table.'.name'])
+            ->leftJoin('form_entries', function ($join) {
+                $join->on('form_entries.tags', '=', DB::raw('CONCAT(\'course-\', '.$this->table.'.id, \'-presence\')'));
+            });
     }
 
     /**
@@ -46,9 +44,10 @@ class FormEntryUserSupportProfileRelationship extends Relation
     public function addEagerConstraints(array $models)
     {
         $this->query
-            ->whereIn('form_entries.user_id', collect($models)->pluck('id'))
-            ->where('form_entries.form_id', DB::raw(config('larapress.lcms.support_group_default_form_id')))
-        ;
+            ->whereIn('form_entries.id', collect($models)->map(function (FormEntry $model) {
+                return $model->id;
+            }));
+
         $this->isReadyToLoad = true;
     }
 
@@ -62,13 +61,6 @@ class FormEntryUserSupportProfileRelationship extends Relation
      */
     public function initRelation(array $models, $relation)
     {
-        foreach ($models as $model) {
-            $model->setRelation(
-                $relation,
-                null
-            );
-        }
-
         return $models;
     }
 
@@ -88,12 +80,12 @@ class FormEntryUserSupportProfileRelationship extends Relation
         }
 
         foreach ($models as $model) {
-            $resultset = $results->first(function (Model $contract) use ($model) {
-                return $contract->user_id === $model->id;
+            $resultset = $results->filter(function (Model $contract) use ($model) {
+                return $model->tags === 'course-'.$contract->id.'-presence';
             });
             $model->setRelation(
                 $relation,
-                $resultset
+                $resultset->first(),
             );
         }
 

@@ -36,13 +36,10 @@ class Repository extends ProductRepository implements ICourseSessionRepository
         /** @var Product[] */
         $items = $query->get();
 
-        $locked = $this->cartService->getLockedItemIds($user);
-
         foreach ($items as $item) {
             // we already are in  purchased products list
             $item['available'] = true;
-
-            $item['locked'] = in_array($item->parent_id, $locked) && !$item->isFree();
+            $item['locked'] = $this->cartService->isProductOnLockedList($user, $item) && !$item->isFree();
 
             if (isset($item->data['types']['session']['sendForm']) && $item->data['types']['session']['sendForm']) {
                 $item['sent_forms'] = FormEntry::query()
@@ -54,11 +51,12 @@ class Repository extends ProductRepository implements ICourseSessionRepository
 
             $itemChildren = [];
             if (!is_null($item->children) && count($item->children) > 0) {
+                /** @var Product[] */
                 $innerChilds = $item->children;
                 foreach ($innerChilds as $child) {
                     // we already are in  purchased products list
                     $child['available'] = true;
-                    $child['locked'] = $item['locked'];
+                    $child['locked'] = ($item['locked'] || $this->cartService->isProductOnLockedList($user, $child)) && !$child->isFree();
                     $itemChildren[] = $child;
                 }
             }

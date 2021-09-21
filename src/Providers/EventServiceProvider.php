@@ -13,19 +13,23 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        // sync ecommerce for support group
-        'Larapress\Profiles\Services\FormEntry\FormEntryUpdateEvent' => [
-            'Larapress\LCMS\Services\SupportGroup\SupportGroupFormListener',
-        ],
-        'Larapress\Auth\Signup\SignupEvent' => [
-            'Larapress\LCMS\Services\SupportGroup\SupportGroupSignupListener'
-        ],
-
         // on cart purchased, calculate support share & introducer share
         'Larapress\ECommerce\Services\Cart\CartPurchasedEvent' => [
-            'Larapress\LCMS\Services\SupportGroup\CartPurchasedSupportShare',
-            'Larapress\LCMS\Services\SupportGroup\CartPurchasedIntroducerShare',
+            'Larapress\LCMS\Services\SupportGroup\Reports\CartPurchasedSupportReport',
+            'Larapress\LCMS\Services\SupportGroup\Reports\CartPurchasedIntroducerReport',
         ],
+
+        // gift for user profile
+        'Larapress\Profiles\Services\FormEntry\FormEntryUpdateEvent' => [
+            'Larapress\LCMS\Services\SupportGroup\Listeners\ProfileFilledListener',
+        ],
+
+        // gift for signup
+        'Larapress\Auth\Signup\SignupEvent' => [
+            // Introducer on signin
+            'Larapress\LCMS\Services\SupportGroup\Listeners\SignupGiftListener'
+        ],
+
     ];
 
 

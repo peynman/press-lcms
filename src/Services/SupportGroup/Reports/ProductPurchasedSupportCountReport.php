@@ -1,12 +1,12 @@
 <?php
 
-namespace Larapress\LCMS\Services\SupportGroup;
+namespace Larapress\LCMS\Services\SupportGroup\Reports;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Larapress\ECommerce\Services\Cart\CartPurchasedEvent;
 
-class CartPurchasedSupportShare implements ShouldQueue
+class ProductPurchasedSupportCountReport implements ShouldQueue
 {
     use Dispatchable;
 

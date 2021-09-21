@@ -3,6 +3,7 @@
 namespace Larapress\LCMS\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Larapress\ECommerce\Services\Wallet\IWalletService;
 use Larapress\LCMS\Services\SupportGroup\ISupportGroupService;
 use Larapress\LCMS\Commands\LCMSCreateProductType;
 use Larapress\LCMS\Services\CourseSession\FormService;
@@ -10,6 +11,7 @@ use Larapress\LCMS\Services\CourseSession\Repository;
 use Larapress\LCMS\Services\CourseSession\ICourseSessionFormService;
 use Larapress\LCMS\Services\CourseSession\ICourseSessionRepository;
 use Larapress\LCMS\Services\SupportGroup\SupportGroupService;
+use Larapress\LCMS\Services\SupportGroup\WalletService\SupportGroupWalletService;
 
 class PackageServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class PackageServiceProvider extends ServiceProvider
         $this->app->bind(ICourseSessionFormService::class, FormService::class);
         $this->app->bind(ICourseSessionRepository::class, Repository::class);
         $this->app->bind(ISupportGroupService::class, SupportGroupService::class);
+        $this->app->bind(IWalletService::class, SupportGroupWalletService::class);
 
         $this->app->register(EventServiceProvider::class);
     }

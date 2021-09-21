@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Larapress\CRUD\Models\Role;
+use Larapress\LCMS\Services\SupportGroup\Relations\UserSupportProfileRelation;
 use Larapress\Profiles\Models\FormEntry;
 
 trait BaseSupportGroupUserTrait {
@@ -36,6 +37,42 @@ trait BaseSupportGroupUserTrait {
         )->where('form_id', config('larapress.lcms.support_group_default_form_id'));
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function form_support_introducer_entry()
+    {
+        return $this->hasOne(
+            FormEntry::class,
+            'user_id'
+        )->where('form_id', config('larapress.lcms.introducer_default_form_id'));
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function form_support_user_profile()
+    {
+        return new UserSupportProfileRelation($this);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return FormEntry
+     */
+    public function getProfileAttribute()
+    {
+        if ($this->hasRole(['support', 'support-external'])) {
+            return $this->form_profile_support;
+        }
+
+        return $this->form_profile_default;
+    }
 
     /**
      * Undocumented function
@@ -75,7 +112,6 @@ trait BaseSupportGroupUserTrait {
         return null;
     }
 
-
     /**
      * Undocumented function
      *
@@ -94,36 +130,12 @@ trait BaseSupportGroupUserTrait {
     /**
      * Undocumented function
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function form_support_introducer_entry()
-    {
-        return $this->hasOne(
-            FormEntry::class,
-            'user_id'
-        )->where('form_id', config('larapress.lcms.introducer_default_form_id'));
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function form_support_user_profile()
-    {
-        return new FormEntryUserSupportProfileRelationship($this);
-    }
-
-    /**
-     * Undocumented function
-     *
      * @return void
      */
     public function getSupportUserProfileAttribute()
     {
         return $this->form_support_user_profile;
     }
-
 
     /**
      * Undocumented function
@@ -140,7 +152,7 @@ trait BaseSupportGroupUserTrait {
                     ->first();
                 if (!is_null($entry)) {
                     $introducer_id = explode('-', $entry->tags)[2];
-                    $class = config('larapress.crud.user.class');
+                    $class = config('larapress.crud.user.model');
                     $introducer = call_user_func([$class, 'find'], $introducer_id);
                     return [$introducer, $entry];
                 }
@@ -148,5 +160,42 @@ trait BaseSupportGroupUserTrait {
             ['user.introducer:' . $this->id],
             null
         );
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return null|int
+     */
+    public function getIntroducerId()
+    {
+        if (!is_null($this->form_support_registration_entry)) {
+            $tags = $this->form_support_registration_entry->tags;
+            if (Str::startsWith($tags, 'introducer-')) {
+                return intval(Str::substr($tags, Str::length('introducer-id-')));
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Undocumented function
+     *
+     * @return IProfileUser|null
+     */
+    public function getIntroducer() {
+        if (!is_null($this->form_support_registration_entry)) {
+            $tags = $this->form_support_registration_entry->tags;
+            if (Str::startsWith($tags, 'introducer-')) {
+                $introducer_id = explode('-', $tags)[2];
+                $class = config('larapress.crud.user.model');
+                $introducer = call_user_func([$class, 'find'], $introducer_id);
+                return $introducer;
+            }
+        }
+
+        return null;
     }
 }

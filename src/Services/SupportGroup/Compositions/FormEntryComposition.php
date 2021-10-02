@@ -29,7 +29,7 @@ class FormEntryComposition extends CRUDProviderComposition
                 $query->whereHas('user.form_entries', function ($q) use ($user) {
                     $q->where('tags', 'support-group-' . $user->id);
                 });
-            } elseif ($user->hasRole(config('larapress.ecommerce.product_owner_role_ids'))) {
+            } elseif ($user->hasRole(config('larapress.ecommerce.products.product_owner_role_ids'))) {
                 $ownerTagEntries = Helpers::flattenNestedAray(
                     array_map(function ($id) {
                         return ['course-' . $id . '-presence', 'course-' . $id . '-taklif', 'azmoon-' . $id];
@@ -58,7 +58,7 @@ class FormEntryComposition extends CRUDProviderComposition
                 /** @var ISupportGroupUser */
                 $customer = $object->user;
                 $access = $customer?->getSupportUserId() === $user->id;
-            } else if ($user->hasRole(config('larapress.ecommerce.product_owner_role_ids'))) {
+            } else if ($user->hasRole(config('larapress.ecommerce.products.product_owner_role_ids'))) {
                 $tag = explode('-', $object->tags);
                 if (count($tag) > 0) {
                     if ($tag[0] === 'course' || $tag[0] === 'azmoon') {

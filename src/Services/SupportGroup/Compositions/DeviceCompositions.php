@@ -1,6 +1,6 @@
 <?php
 
-namespace Larapress\LCMS\Services\SupportGroup\Compositions;
+namespace Larapress\LCMS\Services\SupportGroup\Compositions\Compositions;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;

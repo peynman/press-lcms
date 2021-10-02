@@ -7,7 +7,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Larapress\FileShare\Services\FileUpload\IFileUploadService;
+use Larapress\Profiles\IProfileUser;
 
 /**
  * Update and manage form entries for Courses
@@ -47,7 +49,9 @@ class FormsController extends Controller
     public function receiveCourseForm(ICourseSessionFormService $courseService, IFileUploadService $service, FormRequest $request, $session_id)
     {
         return $service->receiveUploaded($request, function (UploadedFile $file) use ($request, $courseService, $service, $session_id) {
-            $upload = $service->processUploadedFile($request, $file);
+            /** @var IProfileUser */
+            $user = Auth::user();
+            $upload = $service->processUploadedFile($user, $request, $file);
             return $courseService->receiveCourseForm($request, $session_id, $upload);
         });
     }
